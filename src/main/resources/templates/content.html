@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Blog Plaza</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" th:href="@{/style/css/animate.min.css}" />
+	<link rel="stylesheet" th:href="@{/index/css/content.css}">
+	<link rel="stylesheet" th:href="@{/lib/bundle/content.carousel.css}">
+	<link rel="stylesheet" th:href="@{/lib/bundle/swiper-bundle.min.css}">
+	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script th:src="@{/lib/bundle/swiper-bundle.min.js}"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<style>
+		.carousel-inner img {
+			width: 100%;
+			height: 100%;
+		}
+		.fakeimg {
+			height: 200px;
+			background: #aaaaaa;
+		}
+	</style>
+</head>
+<body>
+<!--   轮播图-->
+	<div id="demo" class="carousel slide" data-ride="carousel"  data-interval="2000">
+
+		<!-- 指示符 -->
+		<ul class="carousel-indicators">
+			<li data-target="#demo" data-slide-to="0" class="active"></li>
+			<li data-target="#demo" data-slide-to="1"></li>
+			<li data-target="#demo" data-slide-to="2"></li>
+		</ul>
+		<!-- 轮播图片 -->
+		<div class="carousel-inner">
+			<div th:class="carousel-item+${bannerItem.index==0?' active':''}" th:each="banner,bannerItem:${application.bannnerblog}">
+				<img th:src="${banner.getBimg()}">
+				<div class="carousel-caption">
+					<h3 th:text="${banner.getDesone()}">图片描述标题</h3>
+					<p th:text="${banner.getDestwo()}">描述文字!</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- 左右切换按钮 -->
+		<a class="carousel-control-prev" href="#demo" data-slide="prev">
+			<span class="carousel-control-prev-icon"></span>
+		</a>
+		<a class="carousel-control-next" href="#demo" data-slide="next">
+			<span class="carousel-control-next-icon"></span>
+		</a>
+
+	</div>
+<nav id="navboot" class="navbar  bg-dark navbar-dark sticky-top animated rotateInDownLeft" >
+	<a class="navbar-brand" th:href="@{/blog/index}">首页</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="collapsibleNavbar">
+		<ul class="navbar-nav">
+			<li class="nav-item">
+				<a class="nav-link" href="#">分类1</a>
+			</li>
+			<li class="nav-item">
+				<a th:href="@{/chatlist/addlist(vid='')}" class="nav-link" >交流</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#">分类3</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+<div class="animated flash">
+	<h2  style="text-align: center;margin-top: 20px" class="display-3">Practice makes perfect</h2>
+	<h2  style="text-align: center;margin-top: 20px;color: #C49F65 " class="display-3">isn't it </h2>
+</div>
+<div class="container animated bounceIn" >
+	<div class="input-group mb-3  sticky-top">
+		<input id="searchtxt" type="text" class="form-control" placeholder=". . . . . . ">
+		<div class="input-group-append search-icon">
+			<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+             </svg></span>
+		</div>
+	</div>
+<!--	搜索框-->
+	<div class="row" >
+		<div class="col-sm-4 ">
+			<div  class="col-sm" th:each="blog:${session.hotContent}">
+				<div style="text-align: center">
+					<a  class="a-title" target="_blank" th:href="@{/blog/check(blogid=${blog.getBid()})}">
+						<h5 class="hottitle" th:text="${blog.getTitle()}">标题</h5>
+					</a>
+				</div>
+				<div class="fakeimg" ><img class="firstpicture img-thumbnail" th:src="${blog.getFirstPicture()}"></div>
+				<p class="text-muted description" th:text="${'&nbsp;&nbsp;&nbsp;'+blog.getDescription()}">文章简介..</p>
+				<div>
+					<img class="rounded-circle spanava" th:src="${blog.getTAvatar()}">
+                    <a th:unless="${session.user==null?true:false}" target="_blank" th:href="@{/blog/visitor(id=${blog.getId()})}"><span class="text-muted auther-name" th:text="${blog.getName()}"></span></a>
+					<a th:if="${session.user==null?true:false}"  ><span class="text-muted auther-name" th:text="${blog.getName()}"></span></a>
+				</div>
+				<hr >
+			</div>
+<!--			分类-->
+			<h2 id="hot-type" >分类</h2>
+			<div class="navbar-dark">
+			<ul class="nav nav-pills flex-column">
+				<li class="nav-item type-item" th:each="type:${session.types}">
+					<svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmarks" viewBox="0 0 16 16">
+						<path d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+						<path d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+					</svg>
+					<a  style="display: inline" class="nav-link" href="#" th:text="${type.getTieba()}">链接</a>
+				</li>
+			</ul>
+			</div>
+		</div>
+		<div class="col-sm-8  "   >
+<!--			置顶-->
+			<div >
+				<div class="fakeimg img-first" ><img class="img-first img-thumbnail" th:src="${session.firstBlog?.getFirstPicture()}"></div>
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
+					<path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+				</svg>
+				<a th:href="@{/blog/check(blogid=${session.firstBlog.getBid()})}"><p th:text="${session.firstBlog.getTitle()}" class="text-muted firstTitle" >
+					置顶标题
+				</p></a>
+				<p  th:text="${'&nbsp;&nbsp;&nbsp;'+session.firstBlog?.getDescription()}" class="text-muted">文章描述</p>
+				<br>
+			</div>
+<!--			非置顶-->
+			<div id="bloglist" class="animated bounceIn " th:fragment="bloglist" >
+			  <div  th:each="content:${session.IPage?.getRecords()}" class="no-content">
+				<a th:href="@{/blog/check(blogid=${content.getBid()})}"><h2 style="text-align: center" th:text="${content?.getTitle()}">热门标题</h2></a>
+				<div class="fakeimg" ><img class="content-img img-thumbnail" th:src="${content?.getFirstPicture()}"></div>
+				<a ><p  style="margin-top: 120px"></p></a>
+				<p class="text-muted" th:text="${'&nbsp;&nbsp;&nbsp;'+content.getDescription()}">文章描述</p>
+				<hr >
+			  </div>
+		      <nav  aria-label="Page navigation example aria" style="margin: 50px 300px;"  class="pagination-lg">
+			<ul class="pagination" >
+				<li th:class="${session.IPage.getCurrent()==1?'page-item disabled':'page-item'}"  >
+					<a class="page-link "  aria-label="Previous" >
+						<span class="page1" aria-hidden="true" th:value="${session.IPage.getCurrent()-1}" >&laquo;</span>
+					</a>
+				</li>
+				<li class="page-item" >
+					<a class="page-link a1 "  th:text="1" ></a>
+				</li>
+				<li th:class="${(session.IPage.getPages())==1? 'page-item disabled':'page-item'}">
+					<a class="page-link a1" th:text="2"  ></a>
+				</li>
+				<li th:class="${(session.IPage.getPages())<=2?'page-item disabled':'page-item'}">
+					<a class="page-link a1"  th:text="3"></a>
+				</li>
+				<li class="page-item" ><a class="page-link" th:text="${session.IPage.getCurrent()}">当前页</a></li>
+				<li th:class="${session.IPage.getCurrent()==session.IPage.getPages()?'page-item disabled':'page-item'}" class="page-item " >
+					<a class="page-link "  aria-label="Next" >
+						<span class="page1"  th:value="${session.IPage.getCurrent()+1}" aria-hidden="true" >&raquo;</span>
+					</a>
+				</li>
+				<li class="page-item" ><a class="page-link" th:text="${session.IPage.getPages()}">总页数</a></li>
+			</ul>
+		</nav>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="jumbotron text-center" style="margin-bottom:0;background-color: black">
+	<p></p>
+</div>
+</body>
+<script type="text/javascript">
+	// 回车搜索
+	$('#searchtxt').bind('keypress',function(event){
+		//13 代表的是回车健
+		if(event.keyCode == 13)
+		{
+			var currentpage = $(this).text();
+			var title = $('#searchtxt').val();
+			$.ajax({
+				url : "http://localhost:8080/online/blog/pagesplitplus",
+				data: {"title": title,"currentpage":currentpage},
+				type : "GET",
+				success: function (data) {
+					$("#bloglist").html(data);
+				}
+			})
+		}
+	})
+	// 点击图标搜索
+	$(".search-icon").click(function(){
+		var currentpage = $(this).text();
+		var title = $('#searchtxt').val();
+		$.ajax({
+			url : "http://localhost:8080/online/blog/pagesplitplus",
+			data: {"title": title,"currentpage":currentpage},
+			type : "GET",
+			success: function (data) {
+				$("#bloglist").html(data);
+			}
+		})
+	})
+	// 分页
+	$(document).on('click','.a1',function(evt){
+		var currentpage = $(this).text();
+		var title = $('#searchtxt').val();
+		$.ajax({
+			url : "http://localhost:8080/online/blog/pagesplitplus",
+			data: {"title": title,"currentpage":currentpage},
+			type : "GET",
+			success: function (data) {
+				$("#bloglist").html(data);
+			}
+		})
+	});
+	$(document).on('click','.page1',function(evt){
+		var nextpage = $(this).attr("value");
+		alert(nextpage)
+		var title = $('#searchtxt').val();
+		$.ajax({
+			url : "http://localhost:8080/online/blog/pagesplitplus",
+			data: {"title": title,"currentpage":nextpage},
+			type : "GET",
+			success: function (data) {
+				$("#bloglist").html(data);
+			}
+		})
+	})
+</script>
+</html>

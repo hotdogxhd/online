@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width" />
+	<meta name="robots" content="all" />
+	<title>我的博客</title>
+	<link rel="stylesheet" th:href="@{/index/layui/css/layui.css}" />
+	<link rel="stylesheet" th:href="@{/style/css/animate.min.css}" />
+	<link rel="stylesheet" th:href="@{/lib/css/editormd.min.css}">
+	<link rel="stylesheet" th:href="@{/style/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/style/css/dianzan.css}" />
+	<link rel="stylesheet" th:href="@{/index/font-awesome/css/font-awesome.min.css}">
+	<link rel="stylesheet" th:href="@{/index/css/master.css}" />
+	<link rel="stylesheet" th:href="@{/index/css/gloable.css}" />
+	<link rel="stylesheet" th:href="@{/index/css/nprogress.css}" />
+	<link rel="stylesheet" th:href="@{/index/css/blog.css}" />
+	<link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css}">
+</head>
+<body>
+<header class="gird-header">
+	<div class="header-fixed">
+		<div class="header-inner">
+			<a href="javascript:void(0)" class="header-logo" id="logo" ></a>
+			<nav class="nav" id="nav" >
+				<ul >
+					<li><a th:href="@{/login/return}">首页</a></li>
+					<li><a th:href="@{/user/article}">博客</a></li>
+					<li><a th:href="@{/user/edit}">编辑</a></li>
+					<li><a th:href="@{/message/diary}">说说</a></li>
+					<li ><a th:href="@{/blog/message}">信息</a></li>
+					<li style="padding-right:100px; height: 40px">
+						<div class="search" >
+							<label class="search-wrap">
+								<input type="text" id="searchtxt" name="title" style="border:0.5px #378888" placeholder="输入关键字搜索" />
+								<span  class="search-icon">
+											<i class="fa fa-search"></i>
+										</span>
+							</label>
+							<ul class="search-result" ></ul>
+						</div>
+					</li>
+				</ul>
+			</nav>
+			<a class="phone-menu">
+				<i></i>
+				<i></i>
+				<i></i>
+			</a>
+		</div>
+	</div>
+</header>
+<div class="doc-container animated shake" id="doc-container" style="z-index : 1 !important;margin-top: 70px">
+	<div  class="m-container m-padded-tb-big">
+		<div class="ui container">
+<!--			更新-->
+			<form th:unless="${blog==null}" th:id="blog-form" th:action="@{/blog/upblog}" method="POST" class="ui form" >
+                  <!--		隐藏表单		-->
+				<input type="hidden"   name="bid" th:value="${blog?.getBid()}" >
+				<div class="required field" style="margin-top: 50px">
+					<div class="ui left labeled input" >
+
+						<select class="custom-select teal " style="width:80px;background-color: #00B5AD" name="status">
+							<option value="1" th:disabled="disabled"  >请选择状态</option>
+							<option value="1" th:selected="${blog?.getStatus()==1?'true':'false'}">置顶</option>
+							<option value="2" th:selected="${blog?.getStatus()==2?'true':'false'}" >原创</option>
+							<option value="3" th:selected="${blog?.getStatus()==3?'true':'false'}">转载</option>
+						</select>
+						<input type="text" th:value="${blog?.getTitle()}" name="title" placeholder="标题"  >
+					</div>
+				</div>
+				<div class="required field">
+					<div id="md-content" style="z-index : 1 !important;">
+						 <textarea  th:text="${blog?.getContent()}" placeholder="文章内容" name="content" style="display: none"  >
+                         </textarea>
+					</div>
+				</div>
+				<div class="two fields">
+					<div class="required field">
+						 <select class="custom-select teal " style="width:80px;background-color: #00B5AD" name="tieba">
+							<option value="1" th:disabled="disabled" selected="selected" th:value="分类">&nbsp;分类</option>
+							<option value="1"  th:selected="${blog?.getTieba()==type.getTieba()?'true':'false'}" th:each="type:${application.types}"  th:value="${type.getTieba()}" th:text="'&nbsp;'+${type.getTieba()}"></option>
+						</select>
+
+					</div>
+				</div>
+
+				<div class="required field">
+					<div class="ui left labeled input">
+						<label class="ui teal  label">首图</label>
+						<input type="text"  th:value="${blog?.getFirstPicture()}" name="firstPicture"  placeholder="首图地址" >
+					</div>
+				</div>
+				<div class="required field">
+					<textarea name="description" th:text="${blog?.getDescription()}" placeholder="博客描述..." maxlength="200"  ></textarea>
+				</div>
+				<div class="ui error message"></div>
+				<div class="ui right aligne container">
+					<input th:if="${blog}==null" type="submit" id="publish-btn" class="ui teal button" name="issue" th:value="发布"></input>
+					<input th:if="${blog}!=null" type="submit" id="publish-bt-nupdate" class="ui teal button" name="issue" th:value="发布更新"></input>
+				</div>
+			 </form>
+			</form>
+<!--			新增-->
+			<form th:if="${blog==null}"th:id="blog-form" th:action="@{/blog/issue}" method="POST" class="ui form" >
+				<!--		隐藏表单		-->
+				<input type="hidden"   name="id" th:value="${session.user.getId()}" >
+				<div class="required field">
+					<div class="ui left labeled input">
+
+						<select class="custom-select teal " style="width:80px;background-color: #00B5AD" name="status">
+							<option value="1" th:disabled="disabled" >请选择状态</option>
+
+							<option value="1" th:selected="${blog?.getStatus()==1?'true':'false'}">置顶</option>
+							<option value="2" th:selected="${blog?.getStatus()==2?'true':'false'}" >原创</option>
+							<option value="3" th:selected="${blog?.getStatus()==3?'true':'false'}">转载</option>
+						</select>
+						<input type="text" th:value="${blog?.getTitle()}" name="title" placeholder="标题"  >
+					</div>
+				</div>
+				<div class="required field">
+					<div th:id="md-content" style="z-index : 1 !important;">
+						 <textarea  th:text="${blog?.getContent()}" placeholder="文章内容" name="content" style="display: none"  >
+                         </textarea>
+					</div>
+				</div>
+				<div class="two fields">
+					<div class="required field">
+						<select class="custom-select teal " style="width:80px;background-color: #00B5AD" name="tieba">
+							<option value="1"th:disabled="disabled"  selected="selected" th:value="分类">&nbsp; 分类</option>
+							<option value="1"  th:selected="${blog?.getTieba()==type.getTieba()?'true':'false'}" th:each="type:${application.types}"  th:value="${type.getTieba()}" th:text="'&nbsp;'+${type.getTieba()}"></option>
+						</select>
+
+					</div>
+				</div>
+
+				<div class="required field">
+					<div class="ui left labeled input">
+						<label class="ui teal  label">首图</label>
+						<input type="text"  th:text="${blog?.getFirstPicture()}" name="firstPicture"  placeholder="首图地址" >
+					</div>
+				</div>
+				<div class="required field">
+
+					<textarea name="description" th:text="${blog?.getDescription()}" placeholder="博客描述..." maxlength="200"  ></textarea>
+				</div>
+				<div class="ui error message"></div>
+				<div class="ui right aligne container">
+					<input th:if="${blog}==null" type="submit" th:id="publish-btn" class="ui teal button" name="issue" th:value="发布"></input>
+					<input th:if="${blog}!=null" type="submit" th:id="publish-bt-nupdate" class="ui teal button" name="issue" th:value="发布更新"></input>
+
+				</div>
+			</form>
+			</form>
+	   </div>
+	</div>
+</div>
+<footer class="grid-footer">
+	<div class="footer-fixed">
+		<div class="copyright">
+			<div class="info" style="height: 50px">
+			</div>
+		</div>
+	</div>
+</footer>
+<script th:src="@{/index/layui/layui.js}"></script>
+<script th:src="@{/style/js/jquery.min.js}"></script>
+<script th:src="@{/style/js/bootstrap.min.js}"></script>
+<script th:src="@{https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js}"></script>
+<script th:src="@{/index/js/yss/gloable.js}"></script>
+<script th:src="@{/index/js/plugins/nprogress.js}"></script>
+<script>NProgress.start();</script>
+<script th:src="@{/index/js/yss/article.js}"></script>
+<script th:src="@{/style/js/dianzan.js}"></script>
+<script th:src="@{/lib/editormd.js}"></script>
+<script>
+	window.onload = function () {
+		 NProgress.done();
+	};
+
+  //初始化编辑器
+	var contentEditor;
+	$(function() {
+		contentEditor = editormd("md-content", {
+			width : "100%",
+			height  : 640,
+			syncScrolling : "single",
+			path    : "../lib/lib/"
+		});
+	});
+
+	//分类下拉列表
+	$('.ui.dropdown').dropdown({
+		on : 'hover'
+	});
+
+	$('#save-btn').click(function () {
+		$('[name="published"]').val(false);
+		console.log('save-tn')
+		console.log( $('#blog-form').val())
+
+		$('#blog-form').submit();
+	});
+
+	$('.ui.form').form({
+		fields : {
+			title : {
+				identifier: 'title',
+				rules: [{
+					type : 'empty',
+					prompt: '请输入文章标题'
+				}]
+			},
+			content : {
+				identifier: 'content',
+				rules: [{
+					type : 'empty',
+					prompt: '请输入文章内容'
+				}]
+			},
+			typeId : {
+				identifier: 'type.id',
+				rules: [{
+					type : 'empty',
+					prompt: '请输入文章分类'
+				}]
+			},
+			firstPicture : {
+				identifier: 'firstPicture',
+				rules: [{
+					type : 'empty',
+					prompt: '请输入文章的首图地址'
+				}]
+			},
+			description : {
+				identifier: 'description',
+				rules: [{
+					type : 'empty',
+					prompt: '请输入文章的描述'
+				}]
+			}
+		}
+	});
+
+
+</script>
+</body>
+</html>

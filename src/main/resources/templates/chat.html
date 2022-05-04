@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" th:href="@{/style/css/chat.css}" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <a class="return" th:href="@{/login/return}"> <button type="button" class="btn btn-info" style="width: 100px;margin:10px 0 0 50px">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    &nbsp;
+   首 页
+ </button></a>
+<div class="chat_box">
+    <div class="chat_box_left">
+        <div class="chat_box_left_header">
+            <div class="header_left">
+                <img id="userava" class="rounded-circle userava" th:src="${session.user.getTAvatar()}"/>
+            </div>
+            <div th:text="${session.user.getName()}" class="header_right">名字</div>
+        </div>
+        <div class="chat_box_left_reminder">
+            ................ ................ ................
+        </div>
+        <ul class="chat_box_left_bottom" th:fragment="chat_box_left_bottom">
+            <li th:each="chatuser:${session?.chatList}" style="margin-bottom: 1px">
+                <div class="alert alert-info alert-dismissible  brotherdiv">
+                    <button type="button" class="close" data-dismiss="alert" title="列表里移除">&times;</button>
+                    <img class="rounded-circle useravatar " th:src="${chatuser?.getAvatar()}"/>
+                    <span class="u-name" th:text="${chatuser.getVname()}"></span>
+                    <a title="清空聊天记录">
+                        <svg style="float: right;margin-top: 7px" xmlns="http://www.w3.org/2000/svg" width="16"
+                             height="16" fill="currentColor" class="bi bi-trash-fill deletachat" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3
+                                        4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                        </svg>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="chat_box_right">
+        <div class="chat_box_right_header">
+
+        </div>
+        <div class="chat_box_right_center">
+            <div class="content">
+
+
+
+            </div>
+        </div>
+        <div class="chat_box_right_bottom">
+            <textarea id="textarea" maxlength="300"></textarea>
+            <!--       <button class="sendBtn">发送</button>  -->
+            <button type="button" class="btn btn-success sendBtn">发 送</button>
+        </div>
+    </div>
+</div>
+<script>
+
+    var color = new Array('brown', 'goldenrod', 'goldenrod', 'greenyellow', 'hotpink', 'rosybrown');
+    var i = Math.ceil(Math.random() * color.length); //取1到10的随机整数
+
+    //创建websocket对象
+    var websocket = new WebSocket("ws://localhost:8080/online/chatserver")
+    //建立链接
+    websocket.onopen = function () {
+        //这里可以显示在线用户
+
+    }
+
+    //接收数据
+    websocket.onmessage = function (evt) {
+        //处理服务端传来的数据
+        var data = evt.data;
+
+        var parse = JSON.parse(data);
+
+        var str = '';
+        str += '<div class="sent_image_header " ><img class="rounded-circle useravata "src="' + parse.avataraddress + '"/></div>' +
+            '<div class="send_content"><div style="margin: 10px 10px">' + parse.message + '</div></div>' +
+            '<div style="clear:both;">' + '</div>';
+        //chatname是接收人 右上
+        var chatname = $('.chatname').text();
+        if (chatname == parse.fromName) {
+            $('.content').append(str);
+        }
+        var chatdata = sessionStorage.getItem(parse.fromName);
+        if (chatdata != null) {
+
+            str = chatdata + str;
+
+        }
+        sessionStorage.setItem(parse.fromName, str);
+    }
+    //关闭执行的方法
+    websocket.onclose = function () {
+
+    }
+    var toname;
+    /**
+     * 指定用户的函数
+     */
+    $('.chat_box_left').on('click', '.chat_box_left_bottom li', function () {
+
+        $('.chat_box_right_header').empty();
+        //接收消息用户头像
+        var avatar = $(this).children(".brotherdiv").children(".useravatar").attr("src");
+        //接收消息用户名
+        var name = $(this).children(".brotherdiv").children(".u-name").text();
+        //发送消息用户名（我）
+        var sendname = $(".header_right").text();//左上
+        var chatname = $('.chatname').text();//右上
+        //发送消息用户头像
+        var avataraddress = $(".header_left").children("img").attr("src");
+        var src = '';
+        src += '<img  class="rounded-circle useravatar " src="' + avatar + '" />' +
+            '<span class="u-name chatname"  style="font-size: 15px;margin-left: 20px;">' + name + '</span>'
+        $('.chat_box_right_header').append(src)
+        if (!name == chatname) {
+            $.ajax({
+                url: "http://localhost:8080/online/offline/acceptChat",
+                data: {"acceptname": name},
+                type: "GET",
+                success: function (data) {
+                    var app = '';
+                    $.each(data, function (i, n) {
+                        if (!n.sendName.indexOf(sendname)) {
+                            app += '<div class="answer_image_header " ><img class="rounded-circle useravatar" src="' + avataraddress + '"/></div>' +
+                                '<div class="answer_content"> <div style="margin: 10px 10px">' + n.content + '</div></div>' +
+                                '<div style="clear:both;">' + '</div>';
+                        } else {
+                            app += '<div class="sent_image_header " ><img class="rounded-circle useravatar "src="' + avatar + '"/></div>' +
+                                '<div class="send_content"><div style="margin: 10px 10px">' + n.content + '</div></div>' +
+                                '<div style="clear:both;">' + '</div>';
+                        }
+                    })
+                    $('.content').append(app)
+                    $('.content').scrollTop($('.content')[0].scrollHeight); //滑动轮直接到底部
+                }
+            })
+            toname = name;
+
+            //读取聊天数据渲染到页面
+
+            var chatname = $('.chatname').text();
+            $('.content').html("");
+            if (name == chatname) {
+                var chatdata = sessionStorage.getItem(name);
+                if (chatdata != null) {
+                    app += chatdata;
+                    $('.content').append(chatdata);
+                }
+            }
+        }
+
+    });
+
+    /**
+     * 发送消息的函数
+     */
+    $('.sendBtn').on('click', function () {
+        var bg = $(".chat_box_right_header").children(".u-name").text();
+        var avataraddress = $(".header_left").children("img").attr("src");
+        if (bg.length == 0) {
+            alert("请点击选择交流的账户!");
+        } else {
+            var data = $('#textarea').val();
+            var json = {"toName": toname, "message": data, "avataraddress": avataraddress};
+            websocket.send(JSON.stringify(json));
+            if (data == '') {
+                alert("请输入要发送的信息");
+            } else {
+                var str = '';
+                str += '<div class="answer_image_header " ><img class="rounded-circle useravatar" src="' + avataraddress + '"/></div>' +
+                    '<div class="answer_content"> <div style="margin: 10px 10px">' + data + '</div></div>' +
+                    '<div style="clear:both;">' + '</div>';
+                $('.content').append(str);
+
+                var chatname = $('.chatname').text();
+                var chatdata = sessionStorage.getItem(chatname)
+
+                if (chatdata != null) {
+                    str = chatdata + str
+                }
+
+                sessionStorage.setItem(chatname, str)
+
+                // $(".bg").children(".li_right").children(".account_accept_message").text(sendMessage.substring(0, 8) + '......');
+
+                $("#textarea").val(''); //清空textarea
+                // setTimeout(answers, 1000);
+                $('.content').scrollTop($('.content')[0].scrollHeight); //滑动轮直接到底部
+            }
+        }
+    });
+    /**
+     * 清空聊天记录
+     */
+    $('.deletachat').on('click', function () {
+        var name = $('.chatname').text()
+        var re = confirm("确认删除吗？")
+        if (re == true) {
+            $.ajax({
+                url: "http://localhost:8080/online/offline/delete",
+                data: {"acceptname": name},
+                type: "GET",
+                success: function () {
+                    $('.content').empty()
+                }
+            })
+        } else {
+            return false;
+        }
+
+    })
+    /**
+     * 删除私聊列表成员
+     */
+    $('.close').on('click', function () {
+        alert("3333")
+        var name = $(this).next('.useravatar').next('.u-name').text();
+        var re = confirm("确认删除吗？")
+        if (re == true) {
+            $.ajax({
+                url: "http://localhost:8080/online/chatlist/deleteone",
+                data: {"vname": name},
+                type: "DELETE",
+                success: function () {
+                      // $(".chat_box_left_bottom").html(data);
+                }
+            })
+        } else {
+            return false;
+        }
+    })
+</script>
+
+</body>
+
+</html>

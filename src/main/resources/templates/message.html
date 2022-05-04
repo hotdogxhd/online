@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+<!--    <link rel="stylesheet" th:href="@{/style/css/bootstrap.min.css}">-->
+    <link rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/style/css/reg.css}" type="text/css"/>
+    <script th:src="@{/style/js/jquery.min.js}"></script>
+    <script th:src="@{/style/js/tether.min.js}"></script>
+    <script th:src="@{/style/js/bootstrap.min.js}"></script>
+</head>
+<body>
+
+<div id="login">
+    <form id="from_avatar" method="post" th:action="@{/user/updateMessage}" enctype="multipart/form-data">
+        <img th:src="@{${session.user.getTAvatar()}}"
+             alt="选择并上传头像" id="avatar_img"
+             style="width: 100px;height: 100px;left:0;top: 0;border-radius: 50%;"/>
+        <input type="file" id="avatar_file" name="tAvatar"
+               style="width: 70%;height:70%;opacity: 0;position: absolute;left:0;top: 0;"/>
+        <input type="hidden" th:value="${session.user.id}" name="id">
+        <input th:id="inp1" type="text" required="required" placeholder="用户名" name="name"
+               th:value="${session.user.getName()}"></input>
+        <span id="usernameSpan" style="color:red;">
+            </span>
+        <input th:id="inp2" type="password" required="required" placeholder="密码" name="password"
+               th:value="${session.user.getPassword()}"></input>
+        <span id="passwordSpan" style="color:red;">
+            </span>
+        <input th:id="inp3" type="email" required="required" placeholder="邮箱" name="email"
+               th:value="${session.user.getEmail()}"></input>
+        <span id="emailSpan" style="color:red;">
+            </span>
+        <textarea placeholder="个人简介" maxlength="50" name="intro" th:text="${session.user.getIntro()}"></textarea>
+        <button th:id="but1" class="but btn btn-primary" type="submit">修改</button>
+        <a th:href="@{/blog/page}"><button th:id="but" style="margin-top: 20px" class="return btn btn-primary " type="button")>返回</button></a>
+        <p id="errorMsg" th:text="${return}" style="color: red"></p>
+
+    </form>
+
+</div>
+</body>
+<script type="text/javascript">
+    // 头像预览
+    $("#avatar_file").change(function () {
+        // 获取上传文件对象
+        var file = $(this)[0].files[0];
+        // 读取文件URL
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        // 阅读文件完成后触发的事件
+        reader.onload = function () {
+            // 读取的URL结果：this.result
+            $("#avatar_img").attr("src", this.result);
+        }
+    });
+    window.onload = function () {
+        //用户名
+        var usernameObj = document.getElementById("inp1");
+        usernameObj.onblur = function () {
+            var usernameText = usernameObj.value;
+            var patt = /^\w{5,12}$/;
+            var usernameSpanObj = document.getElementById("usernameSpan");
+            if (patt.test(usernameText)) {
+                usernameSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/right.jpg\">";
+            } else {
+                usernameSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/wrong.jpg\">";
+            }
+        }
+        //密码
+        var passwordObj = document.getElementById("inp2");
+        passwordObj.onblur = function () {
+            var usernameText = passwordObj.value;
+            var patt = /^\w{5,12}$/;
+            var passwordSpanObj = document.getElementById("passwordSpan");
+            if (patt.test(usernameText)) {
+                passwordSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/right.jpg\">";
+            } else {
+                passwordSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/wrong.jpg\">";
+            }
+        }
+        //邮箱
+        var emailObj = document.getElementById("inp3");
+        emailObj.onblur = function () {
+            var usernameText = emailObj.value;
+            var patt = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/;
+            var emailSpanObj = document.getElementById("emailSpan");
+            if (patt.test(usernameText)) {
+                emailSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/right.jpg\">";
+            } else {
+                emailSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/wrong.jpg\">";
+            }
+        }
+        var mess = document.getElementById("message");
+        mess.onblur = function () {
+            var usernameText = emailObj.value;
+            var patt = "";
+            var emailSpanObj = document.getElementById("message-text");
+            if (patt.test(usernameText)) {
+                emailSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/right.jpg\">";
+            } else {
+                emailSpanObj.innerHTML = "<img id=\"imgr\" src=\"/online/style/css/img/wrong.jpg\">";
+            }
+        }
+    };
+    $(function () {
+        $("button.but").click(function () {
+            var usernameText = $("#inp1").val();
+            var usernamePatt = /^\w{5,12}$/;
+            if (!usernamePatt.test(usernameText)) { //4 提示用户结果
+                return false;
+            }
+            // 验证密码：必须由字母，数字下划线组成，并且长度为 5 到 12 位 //1 获取用户名输入框里的内容
+            var passwordText = $("#inp2").val();
+            //2 创建正则表达式对象
+            var passwordPatt = /^\w{5,12}$/;
+            //3 使用 test 方法验证
+            if (!passwordPatt.test(passwordText)) {
+                //4 提示用户结果
+                return false;
+            }
+            var emailText = $("#inp3").val();
+            //2 创建正则表达式对象
+            var emailPatt = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/;
+            //3 使用 test 方法验证
+            if (!emailPatt.test(emailText)) {
+                //4 提示用户结果
+                return false;
+            }
+        })
+    })
+
+</script>
+</html> 

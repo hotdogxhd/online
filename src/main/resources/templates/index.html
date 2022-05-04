@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>学习交流平台</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="shortcut icon" th:href="@{/style/images/favicon.ico}" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="360-site-verification" content="9080cebca28f53d9fb200a9ef6d9c873" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script th:src="@{/style/js/tether.min.js}"></script>
+    <link th:href="@{/style/css/style.css}" type="text/css" rel="stylesheet" />
+    <link th:href="@{/style/css/login.css}" type="text/css" rel="stylesheet" />
+    <script>
+    (function(window) {
+        var theUA = window.navigator.userAgent.toLowerCase();
+        if ((theUA.match(/msie\s\d+/) && theUA.match(/msie\s\d+/)[0]) || (theUA.match(/trident\s?\d+/) && theUA.match(/trident\s?\d+/)[0])) {
+            var ieVersion = theUA.match(/msie\s\d+/)[0].match(/\d+/)[0] || theUA.match(/trident\s?\d+/)[0];
+            if (ieVersion < 10) {
+                var str = "浏览器版本\n不合适了 :(";
+                var str2 = "推荐使用:<a href='https://www.baidu.com/s?ie=UTF-8&wd=%E8%B0%B7%E6%AD%8C%E6%B5%8F%E8%A7%88%E5%99%A8' target='_blank' style='color:red'>谷歌</a>," +
+                    "<a href='https://www.baidu.com/s?ie=UTF-8&wd=%E7%81%AB%E7%8B%90%E6%B5%8F%E8%A7%88%E5%99%A8' target='_blank' style='color:red'>火狐</a>," +
+                    "<a href='https://www.baidu.com/s?ie=UTF-8&wd=%E7%8C%8E%E8%B1%B9%E6%B5%8F%E8%A7%88%E5%99%A8' target='_blank' style='color:red'>猎豹</a>,其他双核急速模式";
+                document.writeln("<pre style='text-align:center;color:#fff;background-color:#0cc; height:100%;border:0;position:fixed;top:0;left:0;width:100%;z-index:1234'>" +
+                    "<h2 style='padding-top:200px;margin:0'><strong>" + str + "<br/></strong></h2><p>" +
+                    str2 + "</p><h2 style='margin:0'><strong>切换到极速模式访问<br/></strong></h2></pre>");
+                document.execCommand("Stop");
+            };
+        }
+    })(window);
+    </script>
+    <style>
+        .buttonblog1{
+            background-image: linear-gradient(90deg,#00C0FF,#FFCF00,#FC4F4F);
+            display: inline-block;
+            padding: 3px;
+            border-radius: 7px;
+            text-decoration: none;
+            animation:randommove 10s linear infinite;
+        }
+        .buttonblog1:hover{
+            animation:randombackground 10s linear infinite;
+        }
+        .buttonblog1 span{
+            display: inline-block;
+            background: #322b2b;
+            color: white;
+            padding: 30px 60px;
+            border-radius: 7px;
+            font-size: 30px;
+            font-weight: 800;
+            text-transform: uppercase; /*强制字体为大写*/
+        }
+        @keyframes randommove{
+            from{background-position: 0 0;}
+            to{background-position: 1000px 0;}
+        }
+        @keyframes randombackground {
+            0% {
+                top: 0px;
+                left: 0px;
+                background: red;
+            }
+            25% {
+                top: 0px;
+                left: 100px;
+                background: blue;
+            }
+            50% {
+                top: 100px;
+                left: 100px;
+                background: yellow;
+            }
+            75% {
+                top: 100px;
+                left: 0px;
+                background: green;
+            }
+            100% {
+                top: 0px;
+                left: 0px;
+                background: red;
+            }
+        }
+    </style>
+</head>
+<body style="height: 100%!important;">
+    <!-- Header -->
+    <div  class="nav" style="height: 52px;width: 100%">
+        <!-- 回显用户信息 -->
+        <img th:if="${session.user!=null}" th:src="${session.user?.getTAvatar()} " class="rounded-circle" style="height: 40px;width: 40px;margin-top: 6px">
+        <a th:text="${session.user?.getName()}" style="color: white;margin: 15px 0 0 15px"> </a>
+        <div style="width: 90%;display: inline">
+            <a th:if="${session.user!=null}"th:href="@{/login}">
+                <marquee style="width: 900px;color: red" th:if="${session.offlinmessage!=null}" th:text="${session.offlinmessage+'用户发来新消息'}"></marquee>
+            <button type="button" class="btn btn-outline-danger" style="width: 50px;float: right;margin-top: 5px" data-toggle="tooltip" data-placement="bottom" title="注销">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+                    <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
+                </svg>
+            </button>
+            </a>
+        </div >
+    </div>
+    <!-- Body -->
+    <section class="cd-hero">
+        <ul class="cd-hero-slider autoplay">
+            <li class="selected">
+                <div class="cd-half-width">
+                    <h2>在线交流</h2>
+                    <p>爱音乐、爱编程、爱生活</p>
+                    <p>寻找志同道合，'会找学习资源'的朋友</p>
+                                              <!-- 注册!!-->
+                    <a th:if="${session.user==null}"  class="buttonblog1" data-toggle="modal" data-target="#myModal"><span>登录</span></a>
+                      <!--                    跳转到个人信息页面-->
+                    <a th:unless="${session.user==null}"  class="buttonblog1" th:href="@{/login/userinfo}">
+                        <span class="index" >个人简介</span>
+                    </a>
+                </div>
+            </li>
+            <li>
+                <div class="cd-full-width">
+                    <h2>观点与分享</h2>
+                    <p>记录生活点滴，分享人生喜乐！</p>
+                    <a class="buttonblog1" th:href="@{/user/content}" target="_blank"><span>查看详情</span></a>
+                </div>
+            </li>
+            <li>
+                <div class="cd-full-width">
+                    <h2>影视与感官</h2>
+                    <p>观看生活影片，感受欢天喜地！</p>
+                    <a class="buttonblog1" th:href="@{/chatlist/addlist(vid='')}" ><span>查看详情</span></a>
+                </div>
+            </li>
+            <li class="cd-bg-video">
+                <div class="cd-full-width">
+                    <h2>志趣相投</h2>
+                    <p>我们都一样热爱生活，记录生活，享受生活！</p>
+                    <a class="buttonblog1" th:href="@{/attention/list}" target="_blank"><span>查看详情</span></a>
+                </div>
+                <div class="cd-bg-video-wrapper" data-video="Tpl/Individual/Style/index/video/video">
+                </div>
+            </li>
+            <li>
+                <div class="cd-full-width">
+                    <h2>说走就走</h2>
+                    <p>生活不止眼前的苟且，还有诗和远方的田野！</p>
+                    <a class="buttonblog1" href="" target="_blank"><span>查看详情</span></a>
+                </div>
+            </li>
+        </ul>
+        <div class="cd-slider-nav">
+            <nav>
+                <span class="cd-marker item-1"></span>
+                <ul>
+                    <li class="selected">
+                        <a class="" href="#0">个人</a>
+                    </li>
+                    <li>
+                        <a class="" href="#0">博客</a>
+                    </li>
+                    <li>
+                        <a class="" href="#0">交流</a>
+                    </li>
+                    <li>
+                        <a class="" href="#0">关注</a>
+                    </li>
+                    <li>
+                        <a class="" href="#0">旅行</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+    <script th:src="@{/style/js/main.js}"></script>
+    <!-- Footer -->
+    <div class="clear"></div>
+    <div class="foot" style="height: 60px!important;">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <a href="#"></a>
+                </div>
+                <div class="col-sm-8 fr"><a href=""> </a>
+                </div>
+                <p></p>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- 模态框头部 -->
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="color: black">登录</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- 模态框主体 -->
+                    <div class="modal-body">
+                        <form method="post"  th:action="@{/login/login}">
+                            <table >
+                                <div class="input-group mb-3 input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">用户名</span>
+                                    </div>
+                                    <input type="text" name="name" class="form-control user-name">
+                                </div>
+                            </table>
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">密码</span>
+                                </div>
+                                <input type="password" name="password" class="form-control user-passw">
+                            </div>
+                        <a class="errmessage" style="color: #e08c0e;float: left"></a>
+                        <a th:href="@{/login/register}" style="color: #ff0000;float: right">没有用户名？请注册</a>
+                    <!-- 模态框底部 -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-entry " >登录</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+                     </form>
+                 </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/style/js/GeeYo.js}"></script>
+    <script>
+    var bheigh = $(window).height();
+    var bheigh = bheigh - 115;
+    $(".cd-hero").css('height', bheigh);
+    $(window).resize(function() {
+        var bheigh = $(window).height();
+        var bheigh = bheigh - 115;
+        $(".cd-hero").css('height', bheigh);
+    });
+    //登录
+    $("button.btn-entry").click(function () {
+        var name = $(".user-name").val();
+        var password = $(".user-passw").val();
+            $.ajax({
+                url: "http://localhost:8080/online/login/login",
+                data: {"name": name,
+                     "password":password},
+                type: "POST",
+                async:false,
+                success: function (data) {
+                     if (data){
+                          window.location.href = 'http://localhost:8080/online/login/return';
+                          $('.errmessage').text("")
+                     }else {
+                           $('.errmessage').text("用户名或密码错误")
+                     }
+                }
+            })
+    })
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width" />
+    <meta name="author" content="www.lzqcode.com" />
+    <meta name="robots" content="all" />
+    <title>我的博客</title>
+	<script th:src="@{/style/js/jquery.min.js}"></script>
+	<link rel="stylesheet" th:href="@{/style/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/index/font-awesome/css/font-awesome.min.css}">
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/index/layui/css/layui.css}" />
+    <link rel="stylesheet" th:href="@{/index/css/master.css}" />
+    <link rel="stylesheet" th:href="@{/index/css/gloable.css}" />
+    <link rel="stylesheet" th:href="@{/index/css/nprogress.css}"/>
+    <link rel="stylesheet" th:href="@{/index/css/blog.css}" />
+</head>
+<body>
+    <div class="header">
+    </div>
+    <header class="gird-header">
+        <div class="header-fixed">
+            <div class="header-inner">
+                <a href="javascript:void(0)" class="header-logo" id="logo" ></a>
+					<nav class="nav" id="nav" >
+						<ul>
+							<li ><a th:href="@{/blog/index}">首页</a></li>
+							<li ><a th:href="@{/user/article}">博客</a></li>
+							<li th:if="${session.visit==true?false:true}"><a th:href="@{/user/edit}">编辑</a></li>
+							<li th:unless="${session.visit==true?false:true}" ><a th:href="@{/message/diary(id=${session.visitorId})}">说说</a></li>
+							<li th:if="${session.visit==true?false:true}" ><a th:href="@{/message/diary(id=${session.user.getId()})}">说说</a></li>
+							<li th:if="${session.visit==true?false:true}"><a th:href="@{/blog/message}">信息</a></li>
+							<li style="padding-right:100px; height: 40px">
+								<div class="search" >
+										<label class="search-wrap">
+											<input type="text" id="searchtxt" name="title" style="border:0.5px #378888" placeholder="输入关键字搜索" />
+											<span  class="search-icon">
+											<i class="fa fa-search"></i>
+										</span>
+										</label>
+										<ul class="search-result" ></ul>
+								</div>
+							</li>
+						</ul>
+					</nav>
+                <a class="phone-menu">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </a>
+            </div>
+        </div>
+    </header>
+    <div class="doc-container" id="doc-container">
+        <div class="container-fixed" >
+		    <div class="col-content" id="LAY_bloglist"  >
+		        <div class="inner" th:fragment="LAY_bloglist" >
+		            <article class="article-list bloglist"  >
+						<section  class="article-item zoomIn article" style="height:  auto" th:each="blog,iterStat:${session.blogIPage?.getRecords()}">
+							<div class="fc-flag" th:if="${blog?.getStatus()==1}" th:text="置顶" style="background-color: red;color: white">置顶</div>
+							<div class="fc-flag" th:if="${blog?.getStatus()==2}" th:text="原创" style="background-color: green;color: white">原创</div>
+							<div class="fc-flag" th:if="${blog?.getStatus()==3}"th:text="转载" style="background-color: #3e8bc7;color: white">转载</div>
+							<h5 class="title">
+								<a th:href="@{/blog/check(blogid=${blog.getBid()})}">
+									<span th:text="${blog?.getTitle()}"></span>
+								</a>
+							</h5>   
+							<div class="time">
+								<span class="year fs-18 ml10 " th:text="${#dates.format(blog?.getAlterTime(),'yyyy-MM-dd HH:mm:ss')}"></span>
+							</div>   
+							<div class="content"  style="margin-bottom: 20px">
+									<img th:src="${blog?.getFirstPicture()}"  style="height: 200px;width: 300px;margin-left: 300px">
+							</div>
+							<div style="margin-bottom:20px ">
+								    <b th:text="${'&nbsp;&nbsp;'+blog?.getDescription()} " style="height: 200px;width: 300px;float: top"></b>
+							</div>
+							<aside class="f-oh footer">
+								<div class="f-fl tags">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tags-fill" viewBox="0 0 16 16">
+										<path d="M2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2zm3.5 4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+										<path d="M1.293 7.793A1 1 0 0 1 1 7.086V2a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l.043-.043-7.457-7.457z"/>
+									</svg>
+									<span class="fa fa-tags fs-16" th:text="${blog?.getTieba()}"></span>
+								</div>
+								<div class="f-fr">
+									<span class="read">
+										<span style="margin-top:800px">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+										</svg>
+										<i style="margin-bottom: 6px;margin-left: 10px" class="num" th:text="${blog?.getPageview()}"></i>
+										</span>
+									</span >
+								</div>
+
+							</aside>
+							<div th:if="${session.visit==true?false:true}" style="display: inline;margin-right: 20px" >
+
+									<a   style="color: beige;text-decoration:none" th:href="@{/blog/updatablog(blogid=${blog.getBid()})}">
+										<svg  style=" color: black" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16">
+											<path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828L10.646.646zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
+											<path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086.086-.026z"/>
+										</svg>
+									</a>
+							</div>
+							<div  th:if="${session.visit==true?false:true}" style="display: inline">
+
+									<a style="text-decoration:none;" th:href="@{/blog/delete(blogid=${blog.getBid()})}" class="deletaclass">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+											<path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+										</svg>
+								    </a>
+							</div>
+							<div   th:if="${session.visit==true?false:true}" style="display: inline;float: right">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+									<path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+									<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+								</svg>
+								<b  th:text="${blog.getIpAddress()}"></b>
+							</div>
+						</section>
+		            </article>
+					<!--				分页-->
+					<nav  aria-label="Page navigation example aria" style="margin: 50px 200px;"  class="pagination-lg">
+						<ul class="pagination" >
+							<li th:class="${session.blogIPage?.getCurrent()==1?'page-item disabled':'page-item'}"  >
+								<a class="page-link "  aria-label="Previous" >
+									<span class="page1" aria-hidden="true" th:value="${session?.blogIPage.getCurrent()-1}" >&laquo;</span>
+								</a>
+							</li>
+							<li class="page-item" >
+								<a class="page-link a1 "  th:text="1" ></a>
+							</li>
+							<li th:class="${(session.blogIPage?.getPages())==1? 'page-item disabled':'page-item'}">
+								<a class="page-link a1" th:text="2"  ></a>
+							</li>
+							<li th:class="${(session.blogIPage?.getPages())<=2?'page-item disabled':'page-item'}">
+								<a class="page-link a1"  th:text="3"></a>
+							</li>
+							<li class="page-item" ><a class="page-link" th:text="${session.blogIPage?.getCurrent()}">当前页</a></li>
+							<li th:class="${session.blogIPage?.getCurrent()==session.blogIPage.getPages()?'page-item disabled':'page-item'}" class="page-item " >
+								<a class="page-link "  aria-label="Next" >
+									<span class="page1"  th:value="${session?.blogIPage.getCurrent()+1}" aria-hidden="true" >&raquo;</span>
+								</a>
+							</li>
+							<li class="page-item" ><a class="page-link" th:text="${session?.blogIPage.getPages()}">总页数</a></li>
+						</ul>
+					</nav>
+		        </div>
+		    </div>
+		    <div class="col-other" style="float: left; " >
+		        <div class="inner" >
+					<div class="other-item  sticky-top" style="min-height: auto;"id="categoryandsearch" >
+			    		<ul class="category mt20" id="category" >
+							<li  style="height: 150px;" >
+								<div class="liback" style="height: 100px">
+									<img style="width:80px;height:80px;margin: 60px 100px 100px " th:unless="${session.visit==true?false:true}" th:src="@{${session.visitor.getTAvatar()}}">
+									<img style="width:80px;height:80px;margin: 60px 100px 100px " class="rounded-circle"  th:if="${session.visit==true?false:true}" th:src="@{${session.user.getTAvatar()}}">
+								</div>
+							</li>
+							<li style="margin: 0px 105px 20px ">
+									<b  th:unless="${session.visit==true?false:true}"th:text="${session.visitor.getName()}"> </b>
+								    <b  th:if="${session.visit==true?false:true}"th:text="${session.user.getName()}"> </b>
+							</li>
+							<li style="height: auto">
+								<div th:unless="${session.visit==true?false:true}" style="color: #9a9a9a;line-height: 26px;margin: 0 15px" th:text="'&nbsp;&nbsp;&nbsp;&nbsp;'+${session.visitor.getIntro()}">
+								</div>
+									<div th:if="${session.visit==true?false:true}" style="color: #9a9a9a;line-height: 26px;margin: 0 15px" th:text="'&nbsp;&nbsp;&nbsp;&nbsp;'+${session.user.getIntro()}">
+									</div>
+							</li>
+
+
+							<li style="height: auto">
+<!--								style="text-align: center"-->
+								<div>
+								    <a th:href="@{/chatlist/addlist(vid=${session.visitor?.getId()})}" style="display: inline-block"><button type="button"  class="btn btn-light rounded" style="margin:20px 0 0 0px">私信</button></a>
+									<a th:if="${session.visit==true?false:true}" style="display: block;display: inline-block;width: 94px;margin: 0px" th:href="@{/attention/list}">
+										<button  type="button" class="btn btn-light rounded attentionbut" style="margin:20px 30px 0 20px" >关注</button>
+									</a>
+									<a th:if="${session.visit==true?true:false}" style="display: block;display: inline-block;width: 94px" >
+										<input type="hidden" class="visitor" th:value="${session.visitor.getId()}">
+										<button  type="button" class="btn btn-light rounded attentionVisit" style="margin:20px 30px 0 20px;" th:text="${session.attuser}">关注</button>
+									</a>
+								</div>
+							</li>
+							<li style="height: auto;margin-top: 20px" >
+								<div  th:if="${session.visit==true?false:true}" style="color: #9a9a9a;line-height: 26px;margin: 0 15px" >
+									<div style="align-content: center;float: right;margin-right:20px;width: auto" >
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+											<path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+											<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+										</svg>
+										<b style="font-size: 5px" th:text="${session.ipadress}"> </b>
+									</div>
+								</div>
+							</li>
+							</li>
+
+						  </ul>
+						<div>
+						</div>
+					</div>
+					<div class="category-toggle"><i class="layui-icon">&#xe603;</i></div>
+					<div class="blog-mask animated layui-hide"></div>
+					</div>
+<!--				访客-->
+					<div class="other-item" th:if="${session.visit==true?false:true}">
+					    <h5 class="other-item-title">最近访客</h5>
+					    <div class="inner">
+					        <dl class="vistor">
+								<dd th:each="visitor:${session.visitlist}"><a th:href="@{/blog/visitor(id=${visitor.getVid()})}"><img class="img-thumbnail" th:src="@{${visitor.getVavatar()}}" th:title="${#dates.format(visitor.getVtime(),'yyyy-MM-dd HH:mm:ss ')}"><cite th:text="${visitor.getVname()}"></cite></a></dd>
+					        </dl>
+					    </div>
+					</div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+    <footer class="grid-footer">
+        <div class="footer-fixed">
+            <div class="copyright">
+                <div class="info" style="height: 50px">
+                </div>
+            </div>
+        </div>
+    </footer>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script th:src="@{/index/layui/layui.js}"></script>
+ 	<script th:src="@{/index/js/yss/article.js}"></script>
+	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+	<script src="https://npmcdn.com/bootstrap@4.0.0-alpha.5/dist/js/bootstrap.min.js"></script>
+	<script th:src="@{/style/js/bootstrap.min.js}"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script th:src="@{/index/js/yss/gloable.js}"></script>
+    <script th:src="@{/index/js/plugins/nprogress.js}"></script>
+    <script>NProgress.start();</script>
+	<script type="text/javascript" color="0,205,205" opacity='0.7' zIndex="-2" count="99"
+			src="//cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
+    <script type="text/javascript">
+
+        window.onload = function () {
+            NProgress.done();
+        };
+	</script>
+  <script type="text/javascript">
+	  // 回车搜索
+	  $('#searchtxt').bind('keypress',function(event){
+		  //13 代表的是回车健
+		  if(event.keyCode == 13)
+		  {
+			  var currentpage = $(this).text();
+			  var title = $('#searchtxt').val();
+			  $.ajax({
+				  url : "http://localhost:8080/online/blog/pagesplit",
+				  data: {"title": title,"currentpage":currentpage},
+				  type : "GET",
+				  success: function (data) {
+					  $("#LAY_bloglist").html(data);
+				  }
+			  })
+		  }
+	  })
+	  // 点击图标搜索
+	  $(".search-icon").click(function(){
+		  var currentpage = $(this).text();
+		  var title = $('#searchtxt').val();
+		  $.ajax({
+			  url : "http://localhost:8080/online/blog/pagesplit",
+			  data: {"title": title,"currentpage":currentpage},
+			  type : "GET",
+			  success: function (data) {
+				  $("#LAY_bloglist").html(data);
+			  }
+		  })
+	  })
+	  // 分页
+	  $(document).on('click','.a1',function(evt){
+		  var currentpage = $(this).text();
+		  var title = $('#searchtxt').val();
+		  $.ajax({
+			  url : "http://localhost:8080/online/blog/pagesplit",
+			  data: {"title": title,"currentpage":currentpage},
+			  type : "GET",
+			  success: function (data) {
+				  $("#LAY_bloglist").html(data);
+			  }
+		  })
+	});
+	  $(document).on('click','.page1',function(evt){
+		  var nextpage = $(this).attr("value");
+		  var title = $('#searchtxt').val();
+		  $.ajax({
+			  url : "http://localhost:8080/online/blog/pagesplit",
+			  data: {"title": title,"currentpage":nextpage},
+			  type : "GET",
+			  success: function (data) {
+				  $("attlist").html(data);
+			  }
+		  })
+	  })
+	  // 删除提示
+	  $(function () {
+		  $("a.deletaclass").click(function () {
+			  return confirm("确认删除吗？")
+		  })
+	  })
+   //关注
+	  $(document).on('click','.attentionVisit',function(){
+		  var text = $('.visitor').val();
+		  var att = $('.attentionVisit').text();
+		  if (att=='关注'){
+		  $.ajax({
+			  url : "http://localhost:8080/online/attention/add",
+			  data: {"id": text},
+			  type : "PUT",
+			  success: function (data) {
+				 $('.attentionVisit').text(data);
+			  }
+		  })}else {
+			  $.ajax({
+				  url : "http://localhost:8080/online/attention/delete",
+				  data: {"id": text},
+				  type : "DELETE",
+				  success: function (data) {
+					  $('.attentionVisit').text(data);
+				  }
+			  })
+		  }
+
+	  })
+
+ </script>
+</body>
+</html>

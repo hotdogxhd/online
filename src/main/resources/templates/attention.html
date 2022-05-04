@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bootstrap 4 Website Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        .fakeimg {
+            height: 200px;
+            background: #aaa;
+        }
+    </style>
+</head>
+<body >
+<div class="jumbotron text-center" style="margin-bottom:0;text-align: center;background-image: url('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F811%2F091214203241%2F140912203241-2-1200.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652874562&t=e13644c66c0593b4d70e321d178b9fe5');background-size:1800px 500px " >
+    <img style="width:80px;height:80px;margin-bottom:20px " class="rounded-circle"  th:if="${session.visit==true?false:true}" th:src="@{${session.user.getTAvatar()}}">
+    <h1 th:text="${session.user.getName()}"></h1>
+    <div style="display: inline-block" id="attentionNum">
+        <table th:fragment="attentionNum">
+            <tr>
+                <td> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                    <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                </svg>&nbsp;关注&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-hearts" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 1.246c.832-.855 2.913.642 0 2.566-2.913-1.924-.832-3.421 0-2.566ZM9 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h10s1 0 1-1-1-4-6-4-6 3-6 4Zm13.5-8.09c1.387-1.425 4.855 1.07 0 4.277-4.854-3.207-1.387-5.702 0-4.276ZM15 2.165c.555-.57 1.942.428 0 1.711-1.942-1.283-.555-2.281 0-1.71Z"/>
+                </svg>&nbsp;粉丝</td>
+            </tr>
+            <tr>
+                <td th:text="${session?.attention}">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td th:text="${session?.fans}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
+    <a class="navbar-brand" th:href="@{/blog/page}">个人首页</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon">a</span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    </div>
+    <div class="input-group mb-3  sticky-top" style="width: 300px;margin :5px 0 5px 0!important;">
+        <input id="searchtxt" type="text" class="form-control" placeholder="搜索TA的内容">
+        <div class="input-group-append search-icon">
+			<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+             </svg>
+            </span>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top:30px">
+    <div class="row" >
+        <div class="col-sm-4">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <a class="nav-link att active" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                        </svg>&nbsp;我的关注</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fans" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-hearts" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.5 1.246c.832-.855 2.913.642 0 2.566-2.913-1.924-.832-3.421 0-2.566ZM9 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h10s1 0 1-1-1-4-6-4-6 3-6 4Zm13.5-8.09c1.387-1.425 4.855 1.07 0 4.277-4.854-3.207-1.387-5.702 0-4.276ZM15 2.165c.555-.57 1.942.428 0 1.711-1.942-1.283-.555-2.281 0-1.71Z"/>
+                    </svg>&nbsp;粉丝</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-8" id="attlist">
+            <div  th:fragment="attlist" >
+           <div th:each="att:${session.attlist}"  >
+               <img class="rounded-circle" style="width: 50px;height: 50px;display: inline-block" th:src="${att?.getTAvatar()}" >
+               <p th:text="${att?.getName()}" style="display: inline-block;margin-left: 10px"></p>
+               <div class="dropdown del-dropdown" style="display: inline-block;float: right">
+                   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                       已关注
+                   </button>
+                   <div class="dropdown-menu" >
+                       <input type="hidden" th:value="${att.getId()}" class="cid">
+                       <a class="dropdown-item" href="#" th:text="取消关注"></a>
+                   </div>
+               </div>
+               <p th:text="${att?.getIntro()}" style="margin-top:10px "></p>
+               <hr>
+           </div>
+            </div>
+       </div>
+    </div>
+</div>
+<footer class="navbar-fixed-bottom" style="margin-top: 130px;height: 100px!important;background-color: black">
+<div class="jumbotron text-center " >
+
+</div>
+</footer>
+<script>
+    $(document).on('click','.att',function(){
+        $(".att").addClass("active");
+        $(".fans").removeClass("active");
+            $.ajax({
+                url : "http://localhost:8080/online/attention/ajaxlist",
+                type : "GET",
+                success: function (data) {
+                    $("#attlist").html(data);
+                }
+            })
+    })
+    $(document).on('click','.fans',function(){
+        $(".fans").addClass("active");
+        $(".att").removeClass("active");
+        $.ajax({
+            url : "http://localhost:8080/online/attention/ajaxfanslist",
+            type : "GET",
+            success: function (data) {
+                $("#attlist").html(data);
+                $(".del-dropdown").empty();
+            }
+        })
+    })
+    $(document).on('click','.dropdown-item',function(){
+        var text = $(this).text()
+        var cid= $(".cid").val();
+       if (text=="取消关注"){
+            $(".dropdown-item").text("关注")
+            $(".dropdown-toggle").text("未关注")
+           $.ajax({
+               url : "http://localhost:8080/online/attention/deletee",
+               data:{id:cid},
+               type : "DELETE",
+               success: function (data) {
+                   $("#attentionNum").html(data);
+               }
+           })
+       }
+        if (text=="关注"){
+            $(".dropdown-item").text("取消关注")
+            $(".dropdown-toggle").text("已关注")
+            $.ajax({
+                url : "http://localhost:8080/online/attention/addd",
+                data:{id:cid},
+                type : "PUT",
+                success: function (data) {
+                    $("#attentionNum").html(data);
+                }
+            })
+        }
+    })
+    // 回车搜索
+    $('#searchtxt').bind('keypress',function(event){
+        var fans = $(".active").text()
+        var name = $('#searchtxt').val();
+       if (fans=="粉丝"){
+           if (event.keyCode == 13) {
+               $.ajax({
+                   url: "http://localhost:8080/online/attention/ajaxfans",
+                   data: {"name": name},
+                   type: "GET",
+                   success: function (data) {
+                       $("#attlist").html(data);
+                       $(".del-dropdown").empty();
+                   }
+               })
+           }
+       }else {
+           //13 代表的是回车健
+           if (event.keyCode == 13) {
+               $.ajax({
+                   url: "http://localhost:8080/online/attention/ajaxquery",
+                   data: {"name": name},
+                   type: "GET",
+                   success: function (data) {
+                       $("#attlist").html(data);
+                   }
+               })
+           }
+       }
+    })
+    // 点击图标搜索
+    $(".search-icon").click(function(){
+        var fans = $(".active").text()
+        var name = $('#searchtxt').val();
+        if (fans=="粉丝"){
+            $.ajax({
+                url: "http://localhost:8080/online/attention/ajaxfans",
+                data: {"name": name},
+                type: "GET",
+                success: function (data) {
+                    $("#attlist").html(data);
+                    $(".del-dropdown").empty();
+                }
+            })
+        }else {
+        $.ajax({
+            url : "http://localhost:8080/online/attention/ajaxquery",
+            data: {"name": name},
+            type : "GET",
+            success: function (data) {
+                $("#attlist").html(data);
+            }
+        })
+        }
+    })
+</script>
+</body>
+</html>

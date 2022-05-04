@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhd.offline.mapper.OfflineMapper">
+      <update id="notlikequery">
+           UPDATE offline SET isdel_send=CONCAT(isdel_send,#{query})  WHERE send_name=#{query} or accept_name=#{query}
+      </update>
+    <select id="offinemessage" resultType="string">
+        SELECT DISTINCT send_name FROM offline WHERE offline_message=1 and accept_name=#{name}
+    </select>
+    <select id="distinctmessagae" resultType="string">
+        SELECT DISTINCT send_name FROM offline WHERE accept_name=#{accept_name} and offline_message=1
+    </select>
+</mapper>
